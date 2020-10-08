@@ -1,3 +1,4 @@
+import random
 # Constants
 NORTH = 'n'
 EAST = 'e'
@@ -116,3 +117,4 @@ main()
 play_choice = play_again()
 if play_choice != 'n':
     play_again()
+
