@@ -4,6 +4,7 @@ EAST = 'e'
 SOUTH = 's'
 WEST = 'w'
 
+
 def move(direction, col, row):
     ''' Returns updated col, row given the direction '''
     if direction == NORTH:
@@ -37,25 +38,29 @@ def print_directions(directions_str):
         first = False
     print(".")
         
-def find_directions(col, row):
+def find_directions(col, row,coin_tracker):
     ''' Returns valid directions as a string given the supplied location '''
     if col == 1 and row == 1:   # (1,1)
         valid_directions = NORTH
     elif col == 1 and row == 2: # (1,2)
         valid_directions = NORTH+EAST+SOUTH
+        coin_tracker = pull_lever(coin_tracker)
     elif col == 1 and row == 3: # (1,3)
         valid_directions = EAST+SOUTH
     elif col == 2 and row == 1: # (2,1)
         valid_directions = NORTH
     elif col == 2 and row == 2: # (2,2)
         valid_directions = SOUTH+WEST
+        coin_tracker = pull_lever(coin_tracker)
     elif col == 2 and row == 3: # (2,3)
         valid_directions = EAST+WEST
+        coin_tracker = pull_lever(coin_tracker)
     elif col == 3 and row == 2: # (3,2)
         valid_directions = NORTH+SOUTH
+        coin_tracker = pull_lever(coin_tracker)
     elif col == 3 and row == 3: # (3,3)
         valid_directions = SOUTH+WEST
-    return valid_directions
+    return valid_directions, coin_tracker
 
 def play_one_move(col, row, valid_directions):
     ''' Plays one move of the game
@@ -71,13 +76,23 @@ def play_one_move(col, row, valid_directions):
         victory = is_victory(col, row)
     return victory, col, row
 
+def pull_lever(coin_tracker):
+    lever_decision = input("Pull a lever (y/n): ").lower()
+    if lever_decision == 'y':
+        coin_tracker += 1
+        print("You received 1 coin, your total is now {}.".format(str(coin_tracker)))
+    return coin_tracker
+
+
+
 # The main program starts here
 victory = False
 row = 1
 col = 1
+coin_tracker = 0
 
 while not victory:
-    valid_directions = find_directions(col, row)
+    valid_directions, coin_tracker = find_directions(col, row, coin_tracker)
     print_directions(valid_directions)
     victory, col, row = play_one_move(col, row, valid_directions)
-print("Victory!")
+print("Victory! Total coins {}.".format(str(coin_tracker)))
