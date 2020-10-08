@@ -91,17 +91,28 @@ def pull_lever(coin_tracker,valid_directions):
         print("You received 1 coin, your total is now {}.".format(str(coin_tracker)))
     return coin_tracker
 
+def play_again():
+    play_choice = input("Play again (y/n): ").lower()
+    if play_choice == 'y':
+        main()
+    return play_choice
+
+def main():
+    victory = False
+    row = 1
+    col = 1
+    coin_tracker = 0
+    direction = NORTH 
+
+    while not victory:
+        valid_directions, coin_tracker, direction = find_directions(col, row, coin_tracker,direction)
+        print_directions(valid_directions)
+        victory, col, row = play_one_move(col, row, valid_directions)
+    print("Victory! Total coins {}.".format(str(coin_tracker)))
+
+main()
 
 
-# The main program starts here
-victory = False
-row = 1
-col = 1
-coin_tracker = 0
-direction = NORTH 
-
-while not victory:
-    valid_directions, coin_tracker, direction = find_directions(col, row, coin_tracker,direction)
-    print_directions(valid_directions)
-    victory, col, row = play_one_move(col, row, valid_directions)
-print("Victory! Total coins {}.".format(str(coin_tracker)))
+play_choice = play_again()
+if play_choice != 'n':
+    play_again()
