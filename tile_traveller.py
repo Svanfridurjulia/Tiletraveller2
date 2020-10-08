@@ -4,6 +4,8 @@ NORTH = 'n'
 EAST = 'e'
 SOUTH = 's'
 WEST = 'w'
+YES = 'y'
+NO = 'n'
 
 
 def move(direction, col, row):
@@ -43,6 +45,7 @@ def find_directions(col, row,coin_tracker,direction):
     ''' Returns valid directions as a string given the supplied location '''
     if col == 1 and row == 1:   # (1,1)
         valid_directions = NORTH
+        direction = valid_directions
     elif col == 1 and row == 2: # (1,2)
         valid_directions = NORTH+EAST+SOUTH
         if direction != valid_directions:
@@ -50,8 +53,10 @@ def find_directions(col, row,coin_tracker,direction):
         direction = valid_directions
     elif col == 1 and row == 3: # (1,3)
         valid_directions = EAST+SOUTH
+        direction = valid_directions
     elif col == 2 and row == 1: # (2,1)
         valid_directions = NORTH
+        direction = valid_directions
     elif col == 2 and row == 2: # (2,2)
         valid_directions = SOUTH+WEST
         if direction != valid_directions:
@@ -69,24 +74,30 @@ def find_directions(col, row,coin_tracker,direction):
         direction = valid_directions
     elif col == 3 and row == 3: # (3,3)
         valid_directions = SOUTH+WEST
+        direction = valid_directions
     return valid_directions, coin_tracker, direction
 
-def play_one_move(col, row, valid_directions):
+def play_one_move(col, row, valid_directions,seed_choice,invalid_direction,valid_direction):
     ''' Plays one move of the game
         Return if victory has been obtained and updated col,row '''
     victory = False
-    direction = input("Direction: ")
+    direction = random.choice([NORTH, EAST, SOUTH,WEST])
+    print("Direction:",direction)
     direction = direction.lower()
     
     if not direction in valid_directions:
         print("Not a valid direction!")
+        invalid_direction += 1
+
     else:
         col, row = move(direction, col, row)
         victory = is_victory(col, row)
-    return victory, col, row
+        valid_direction += 1
+    return victory, col, row, invalid_direction, valid_direction
 
 def pull_lever(coin_tracker,valid_directions):
-    lever_decision = input("Pull a lever (y/n): ").lower()
+    lever_decision = random.choice([YES, NO])
+    print("Pull a lever (y/n):",lever_decision)
     if lever_decision == 'y':
         coin_tracker += 1
         print("You received 1 coin, your total is now {}.".format(str(coin_tracker)))
@@ -104,12 +115,17 @@ def main():
     col = 1
     coin_tracker = 0
     direction = NORTH 
+    seed_choice = int(input("Input seed: "))
+    random.seed(seed_choice)
+    invalid_direction = 0
+    valid_direction = 0
 
     while not victory:
         valid_directions, coin_tracker, direction = find_directions(col, row, coin_tracker,direction)
         print_directions(valid_directions)
-        victory, col, row = play_one_move(col, row, valid_directions)
-    print("Victory! Total coins {}.".format(str(coin_tracker)))
+        victory, col, row, invalid_direction, valid_direction = play_one_move(col, row, valid_directions,seed_choice,invalid_direction,valid_direction)
+        total_direction = invalid_direction + valid_direction
+    print("Victory! Total coins {}. Moves {}".format(str(coin_tracker),total_direction))
 
 main()
 
@@ -117,4 +133,3 @@ main()
 play_choice = play_again()
 if play_choice != 'n':
     play_again()
-
